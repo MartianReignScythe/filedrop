@@ -22,26 +22,36 @@
   .panel { display: none; width: 100%; max-width: 460px; }
   .panel.active { display: block; }
 
-  .fd-drop-zone { border: 2px dashed #AFA9EC; border-radius: 20px; background: #EEEDFE; padding: 2.5rem 2rem; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; margin-bottom: 1.25rem; }
+  .fd-drop-zone { border: 2px dashed #AFA9EC; border-radius: 20px; background: #EEEDFE; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; margin-bottom: 1.25rem; }
   .fd-drop-zone:hover, .fd-drop-zone.drag-over { background: #CECBF6; border-color: #7F77DD; }
   .fd-drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; font-size: 0; }
-  .fd-drop-icon { font-size: 36px; color: #7F77DD; display: block; margin-bottom: 8px; }
+  .fd-drop-icon { font-size: 34px; color: #7F77DD; display: block; margin-bottom: 8px; }
   .fd-drop-label { font-size: 15px; font-weight: 500; color: #3C3489; display: block; margin-bottom: 4px; }
   .fd-drop-hint { font-size: 12px; color: #534AB7; }
 
-  .file-preview { display: none; align-items: center; gap: 12px; background: white; border-radius: 14px; padding: 12px 16px; margin-bottom: 1.25rem; border: 0.5px solid #CECBF6; }
-  .file-preview.show { display: flex; }
-  .file-icon { width: 44px; height: 44px; background: #EEEDFE; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #534AB7; flex-shrink: 0; }
-  .file-name { font-size: 13px; font-weight: 500; color: #2C2C2A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
-  .file-size-text { font-size: 11px; color: #888780; }
-  .remove-btn { margin-left: auto; background: none; border: none; color: #888780; cursor: pointer; font-size: 20px; line-height: 1; }
+  .queue-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .queue-count { font-size: 11px; font-weight: 500; color: #888780; letter-spacing: 0.07em; text-transform: uppercase; }
+  .clear-all { font-size: 11px; color: #AFA9EC; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 0; }
+  .clear-all:hover { color: #534AB7; }
+
+  .queue { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .q-item { display: flex; align-items: center; gap: 10px; background: white; border-radius: 10px; padding: 8px 10px; border: 0.5px solid #CECBF6; }
+  .q-icon { width: 34px; height: 34px; background: #EEEDFE; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #534AB7; flex-shrink: 0; }
+  .q-icon.done { background: #EAF3DE; color: #27500A; }
+  .q-name { font-size: 12px; font-weight: 500; color: #2C2C2A; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .q-size { font-size: 10px; color: #B4B2A9; white-space: nowrap; flex-shrink: 0; }
+  .q-remove { background: none; border: none; color: #AFA9EC; font-size: 16px; cursor: pointer; padding: 0; flex-shrink: 0; line-height: 1; }
+  .q-remove:hover { color: #791F1F; }
+
+  .add-more-btn { width: 100%; background: #EEEDFE; border: 1.5px dashed #AFA9EC; border-radius: 10px; padding: 9px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: #534AB7; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 1.25rem; position: relative; transition: background 0.15s; }
+  .add-more-btn:hover { background: #CECBF6; }
+  .add-more-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; font-size: 0; }
 
   .lbl { font-size: 11px; font-weight: 500; color: #888780; letter-spacing: 0.07em; text-transform: uppercase; display: block; margin-bottom: 6px; }
   .code-row { display: flex; gap: 8px; margin-bottom: 1.25rem; }
   .code-input { flex: 1; border: 1.5px solid #AFA9EC; border-radius: 12px; padding: 11px 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; letter-spacing: 0.08em; color: #3C3489; background: #EEEDFE; outline: none; transition: border-color 0.15s; }
   .code-input:focus { border-color: #7F77DD; }
   .code-input::placeholder { color: #AFA9EC; font-weight: 400; letter-spacing: 0.02em; }
-
   .btn { padding: 10px 18px; border-radius: 12px; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
   .btn-primary { background: #7F77DD; color: white; width: 100%; justify-content: center; padding: 14px; font-size: 15px; border-radius: 14px; }
   .btn-primary:hover { background: #534AB7; }
@@ -49,9 +59,11 @@
   .btn-sm { background: #EEEDFE; color: #534AB7; border: 1.5px solid #AFA9EC; border-radius: 10px; flex-shrink: 0; }
   .btn-sm:hover { background: #CECBF6; }
 
-  .progress-wrap { height: 4px; background: #EEEDFE; border-radius: 999px; margin: 12px 0; overflow: hidden; display: none; }
+  .progress-wrap { display: none; margin: 12px 0 0; }
   .progress-wrap.show { display: block; }
-  .progress-fill { height: 100%; background: #7F77DD; border-radius: 999px; transition: width 0.3s ease; width: 0%; }
+  .progress-track { height: 4px; background: #EEEDFE; border-radius: 999px; overflow: hidden; margin-bottom: 6px; }
+  .progress-fill { height: 100%; background: #7F77DD; border-radius: 999px; transition: width 0.4s ease; width: 0%; }
+  .progress-text { font-size: 11px; color: #534AB7; text-align: center; }
 
   .code-display { display: none; background: #EEEDFE; border: 1.5px solid #AFA9EC; border-radius: 18px; padding: 1.5rem; text-align: center; margin-top: 1rem; }
   .code-display.show { display: block; }
@@ -71,10 +83,8 @@
   .files-section { margin-top: 1.25rem; display: none; }
   .files-section.show { display: block; }
   .files-section-label { font-size: 11px; font-weight: 500; color: #888780; letter-spacing: 0.07em; text-transform: uppercase; display: block; margin-bottom: 12px; border-top: 0.5px solid #CECBF6; padding-top: 1rem; }
-
   .pin-grid { columns: 2; column-gap: 10px; }
-
-  .pin-card { break-inside: avoid; margin-bottom: 10px; border-radius: 14px; overflow: hidden; border: 0.5px solid #CECBF6; background: white; position: relative; }
+  .pin-card { break-inside: avoid; margin-bottom: 10px; border-radius: 14px; overflow: hidden; border: 0.5px solid #CECBF6; background: white; }
   .pin-thumb { width: 100%; display: block; object-fit: cover; min-height: 80px; max-height: 200px; background: #EEEDFE; }
   .pin-thumb-placeholder { width: 100%; height: 110px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #AFA9EC; }
   .pin-footer { padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -82,13 +92,11 @@
   .pin-fsize { font-size: 10px; color: #B4B2A9; white-space: nowrap; }
   .dl-circle { width: 30px; height: 30px; background: #7F77DD; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; font-size: 14px; text-decoration: none; transition: background 0.15s; cursor: pointer; border: none; }
   .dl-circle:hover { background: #534AB7; }
-
   .file-row { break-inside: avoid; margin-bottom: 10px; border-radius: 14px; border: 0.5px solid #CECBF6; background: white; padding: 12px; display: flex; align-items: center; gap: 10px; column-span: all; }
   .file-row-icon { width: 38px; height: 38px; background: #EEEDFE; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #534AB7; flex-shrink: 0; }
   .file-row-info { flex: 1; min-width: 0; }
   .file-row-name { font-size: 12px; font-weight: 500; color: #2C2C2A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .file-row-size { font-size: 11px; color: #B4B2A9; }
-
   .footer { margin-top: 3rem; text-align: center; font-size: 11px; color: #B4B2A9; }
 </style>
 </head>
@@ -106,19 +114,22 @@
 
 <div id="panel-send" class="panel active">
   <div class="fd-drop-zone" id="drop-zone">
-    <input type="file" id="file-input">
+    <input type="file" id="file-input" multiple>
     <i class="ti ti-cloud-upload fd-drop-icon"></i>
-    <span class="fd-drop-label">drop a file here</span>
-    <span class="fd-drop-hint">or tap to browse · up to 50 MB</span>
+    <span class="fd-drop-label">drop files here</span>
+    <span class="fd-drop-hint">or tap to browse · select multiple · up to 50 MB each</span>
   </div>
 
-  <div class="file-preview" id="file-preview">
-    <div class="file-icon"><i class="ti ti-file" id="preview-icon"></i></div>
-    <div style="min-width:0">
-      <div class="file-name" id="preview-name"></div>
-      <div class="file-size-text" id="preview-size"></div>
+  <div id="queue-section" style="display:none">
+    <div class="queue-header">
+      <span class="queue-count" id="queue-count">0 files queued</span>
+      <button class="clear-all" onclick="clearAll()">clear all</button>
     </div>
-    <button class="remove-btn" onclick="clearFile()"><i class="ti ti-x"></i></button>
+    <div class="queue" id="queue"></div>
+    <button class="add-more-btn">
+      <input type="file" id="add-more-input" multiple>
+      <i class="ti ti-plus" style="font-size:13px"></i> add more files
+    </button>
   </div>
 
   <span class="lbl">your secret code</span>
@@ -127,11 +138,15 @@
     <button class="btn btn-sm" onclick="randomCode()"><i class="ti ti-wand"></i> random</button>
   </div>
 
-  <button class="btn btn-primary" id="share-btn" onclick="shareFile()" disabled>
-    <i class="ti ti-sparkles"></i> share file
+  <button class="btn btn-primary" id="share-btn" onclick="shareFiles()" disabled>
+    <i class="ti ti-sparkles"></i> <span id="share-btn-label">share files</span>
   </button>
 
-  <div class="progress-wrap" id="progress-wrap"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-text" id="progress-text"></div>
+  </div>
+
   <div class="status" id="send-status"></div>
 
   <div class="code-display" id="code-display">
@@ -149,7 +164,6 @@
     <button class="btn btn-sm" onclick="findFiles()"><i class="ti ti-search"></i> find</button>
   </div>
   <div class="status" id="recv-status"></div>
-
   <div class="files-section" id="files-section">
     <span class="files-section-label" id="files-section-label">files shared under this code</span>
     <div class="pin-grid" id="pin-grid"></div>
@@ -161,16 +175,13 @@
 <script>
 const SUPABASE_URL = 'https://rwenznwnptjyhgjsunqw.supabase.co/rest/v1/';
 const SUPABASE_ANON_KEY = 'sb_publishable_XQV0RsoI8GEoa2q9jb0vKA_tv-bICqI';
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const WORDS = ['blossom','velvet','sunray','pebble','willow','amber','cobalt','prism','mango','coral','daisy','fern','lunar','drift','haven','cedar','tide','glimmer','moss','opal','sparrow','indigo','maple','dew','cove'];
 const IMG_EXTS = ['jpg','jpeg','png','gif','webp','svg','heic','avif'];
 
-let selectedFile = null;
+let fileQueue = [];
 
-function isImage(name) {
-  return IMG_EXTS.includes((name.split('.').pop()||'').toLowerCase());
-}
+function isImage(name) { return IMG_EXTS.includes((name.split('.').pop()||'').toLowerCase()); }
 
 function getIcon(name) {
   const ext = (name.split('.').pop()||'').toLowerCase();
@@ -184,7 +195,7 @@ function getIcon(name) {
 }
 
 function fmtSize(b) {
-  if (!b || b===0) return '';
+  if (!b||b===0) return '';
   if (b<1024) return b+' B';
   if (b<1048576) return (b/1024).toFixed(1)+' KB';
   return (b/1048576).toFixed(1)+' MB';
@@ -203,70 +214,100 @@ function randomCode() {
   checkBtn();
 }
 
+function addFiles(fileList) {
+  const tooBig = [];
+  Array.from(fileList).forEach(f => {
+    if (f.size > 50*1024*1024) { tooBig.push(f.name); return; }
+    if (!fileQueue.find(q => q.name===f.name && q.size===f.size)) fileQueue.push(f);
+  });
+  if (tooBig.length) showStatus('send', '✦ skipped (too large): '+tooBig.join(', '), 'error');
+  renderQueue();
+  checkBtn();
+}
+
+function removeFile(idx) {
+  fileQueue.splice(idx, 1);
+  renderQueue();
+  checkBtn();
+}
+
+function clearAll() {
+  fileQueue = [];
+  document.getElementById('file-input').value = '';
+  document.getElementById('add-more-input').value = '';
+  renderQueue();
+  checkBtn();
+}
+
+function renderQueue() {
+  const section = document.getElementById('queue-section');
+  const queueEl = document.getElementById('queue');
+  const countEl = document.getElementById('queue-count');
+  if (fileQueue.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  countEl.textContent = fileQueue.length+' file'+(fileQueue.length===1?'':' s')+' queued';
+  queueEl.innerHTML = fileQueue.map((f,i) => `
+    <div class="q-item" id="qitem-${i}">
+      <div class="q-icon" id="qicon-${i}"><i class="ti ${getIcon(f.name)}"></i></div>
+      <div class="q-name">${f.name.length>28?f.name.slice(0,26)+'…':f.name}</div>
+      <div class="q-size">${fmtSize(f.size)}</div>
+      <button class="q-remove" onclick="removeFile(${i})" aria-label="Remove"><i class="ti ti-x"></i></button>
+    </div>`).join('');
+}
+
+function checkBtn() {
+  const code = document.getElementById('send-code').value.trim();
+  const btn = document.getElementById('share-btn');
+  const lbl = document.getElementById('share-btn-label');
+  btn.disabled = fileQueue.length===0 || !code;
+  lbl.textContent = fileQueue.length > 1 ? 'share '+fileQueue.length+' files' : 'share file';
+}
+
 document.getElementById('file-input').addEventListener('change', function() {
-  if (this.files && this.files[0]) onFile(this.files[0]);
+  if (this.files && this.files.length) addFiles(this.files);
+});
+document.getElementById('add-more-input').addEventListener('change', function() {
+  if (this.files && this.files.length) addFiles(this.files);
 });
 
 const dz = document.getElementById('drop-zone');
 dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
 dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
-dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); if (e.dataTransfer.files[0]) onFile(e.dataTransfer.files[0]); });
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
 
-function onFile(f) {
-  if (!f) return;
-  if (f.size > 50*1024*1024) { showStatus('send','✦ file too large — max 50 MB','error'); return; }
-  selectedFile = f;
-  document.getElementById('preview-icon').className = 'ti '+getIcon(f.name);
-  document.getElementById('preview-name').textContent = f.name;
-  document.getElementById('preview-size').textContent = fmtSize(f.size);
-  document.getElementById('file-preview').classList.add('show');
-  document.getElementById('drop-zone').style.display = 'none';
-  checkBtn();
-}
-
-function clearFile() {
-  selectedFile = null;
-  document.getElementById('file-preview').classList.remove('show');
-  document.getElementById('drop-zone').style.display = '';
-  document.getElementById('file-input').value = '';
-  checkBtn();
-}
-
-function checkBtn() {
+async function shareFiles() {
   const code = document.getElementById('send-code').value.trim();
-  document.getElementById('share-btn').disabled = !selectedFile || !code;
-}
-
-async function shareFile() {
-  const code = document.getElementById('send-code').value.trim();
-  if (!code || !selectedFile) return;
+  if (!code || fileQueue.length===0) return;
   const btn = document.getElementById('share-btn');
   btn.disabled = true;
   btn.innerHTML = '<i class="ti ti-loader"></i> uploading…';
-  showStatus('send','✦ uploading your file…','info');
   const pw = document.getElementById('progress-wrap');
   const pf = document.getElementById('progress-fill');
+  const pt = document.getElementById('progress-text');
   pw.classList.add('show');
-  let pct = 0;
-  const tick = setInterval(()=>{ pct = Math.min(pct+Math.random()*15,85); pf.style.width=pct+'%'; },200);
-  try {
-    const path = code+'/'+selectedFile.name;
-    const { error } = await sb.storage.from('files').upload(path, selectedFile, { upsert: true, cacheControl: '86400' });
-    clearInterval(tick);
-    if (error) throw error;
-    pf.style.width='100%';
-    document.getElementById('active-code').textContent = code;
-    document.getElementById('code-display').classList.add('show');
-    btn.innerHTML = '<i class="ti ti-check"></i> shared! ✦';
-    showStatus('send','✦ file uploaded! share the code with your friend.','success');
-    setTimeout(()=>{ pw.classList.remove('show'); pf.style.width='0%'; },1000);
-  } catch(err) {
-    clearInterval(tick);
-    pw.classList.remove('show'); pf.style.width='0%';
-    btn.disabled=false;
-    btn.innerHTML='<i class="ti ti-sparkles"></i> share file';
-    showStatus('send','✦ upload failed: '+(err.message||'check your Supabase credentials'),'error');
+  let failed = 0;
+  for (let i=0; i<fileQueue.length; i++) {
+    const f = fileQueue[i];
+    const pct = Math.round((i/fileQueue.length)*100);
+    pf.style.width = pct+'%';
+    pt.textContent = 'uploading '+(i+1)+' of '+fileQueue.length+': '+f.name;
+    const iconEl = document.getElementById('qicon-'+i);
+    try {
+      const { error } = await sb.storage.from('files').upload(code+'/'+f.name, f, { upsert: true, cacheControl: '86400' });
+      if (error) throw error;
+      if (iconEl) { iconEl.className='q-icon done'; iconEl.innerHTML='<i class="ti ti-check"></i>'; }
+    } catch(err) {
+      failed++;
+      if (iconEl) { iconEl.className='q-icon'; iconEl.style.background='#FCEBEB'; iconEl.style.color='#791F1F'; iconEl.innerHTML='<i class="ti ti-x"></i>'; }
+    }
   }
+  pf.style.width='100%';
+  pt.textContent = failed===0 ? 'all files uploaded!' : (fileQueue.length-failed)+' uploaded, '+failed+' failed';
+  document.getElementById('active-code').textContent = code;
+  document.getElementById('code-display').classList.add('show');
+  btn.innerHTML = '<i class="ti ti-check"></i> <span id="share-btn-label">done!</span>';
+  showStatus('send', failed===0 ? '✦ all '+(fileQueue.length)+' files shared! give the code to your friend.' : '✦ some files failed — try re-uploading them', failed===0?'success':'error');
+  setTimeout(()=>{ pw.classList.remove('show'); },2000);
 }
 
 function copyCode() {
@@ -283,64 +324,43 @@ async function findFiles() {
   if (!code) return;
   const grid = document.getElementById('pin-grid');
   const section = document.getElementById('files-section');
-  grid.innerHTML = '';
+  grid.innerHTML='';
   section.classList.remove('show');
   showStatus('recv','✦ searching…','info');
-
   try {
     const { data: files, error } = await sb.storage.from('files').list(code);
-    if (error || !files || files.length===0) {
-      showStatus('recv','✦ no files found for that code. double-check the spelling!','error');
-      return;
-    }
-
+    if (error||!files||files.length===0) { showStatus('recv','✦ no files found for that code. double-check the spelling!','error'); return; }
     document.getElementById('recv-status').classList.remove('show');
     document.getElementById('files-section-label').textContent = files.length+' file'+(files.length===1?'':'s')+' shared under this code';
     section.classList.add('show');
-
-    const images = files.filter(f => isImage(f.name));
-    const others = files.filter(f => !isImage(f.name));
-
+    const images = files.filter(f=>isImage(f.name));
+    const others = files.filter(f=>!isImage(f.name));
     images.forEach(file => {
-      const path = code+'/'+file.name;
-      const { data: { publicUrl } } = sb.storage.from('files').getPublicUrl(path);
-      const shortName = file.name.length>20 ? file.name.slice(0,18)+'…' : file.name;
+      const { data: { publicUrl } } = sb.storage.from('files').getPublicUrl(code+'/'+file.name);
+      const shortName = file.name.length>20?file.name.slice(0,18)+'…':file.name;
       const card = document.createElement('div');
-      card.className = 'pin-card';
-      card.innerHTML = `
-        <img class="pin-thumb" src="${publicUrl}" alt="${file.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+      card.className='pin-card';
+      card.innerHTML=`
+        <img class="pin-thumb" src="${publicUrl}" alt="${file.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="pin-thumb-placeholder" style="display:none"><i class="ti ti-photo"></i></div>
         <div class="pin-footer">
-          <div style="min-width:0;flex:1">
-            <div class="pin-fname">${shortName}</div>
-            <div class="pin-fsize">${fmtSize(file.metadata?.size||0)}</div>
-          </div>
-          <a class="dl-circle" href="${publicUrl}" download="${file.name}" target="_blank" aria-label="Download ${file.name}">
-            <i class="ti ti-download"></i>
-          </a>
+          <div style="min-width:0;flex:1"><div class="pin-fname">${shortName}</div><div class="pin-fsize">${fmtSize(file.metadata?.size||0)}</div></div>
+          <a class="dl-circle" href="${publicUrl}" download="${file.name}" target="_blank" aria-label="Download ${file.name}"><i class="ti ti-download"></i></a>
         </div>`;
       grid.appendChild(card);
     });
-
     others.forEach(file => {
-      const path = code+'/'+file.name;
-      const { data: { publicUrl } } = sb.storage.from('files').getPublicUrl(path);
-      const shortName = file.name.length>28 ? file.name.slice(0,26)+'…' : file.name;
+      const { data: { publicUrl } } = sb.storage.from('files').getPublicUrl(code+'/'+file.name);
+      const shortName = file.name.length>28?file.name.slice(0,26)+'…':file.name;
       const row = document.createElement('div');
-      row.className = 'file-row';
-      row.style.columnSpan = 'all';
-      row.innerHTML = `
+      row.className='file-row';
+      row.style.columnSpan='all';
+      row.innerHTML=`
         <div class="file-row-icon"><i class="ti ${getIcon(file.name)}"></i></div>
-        <div class="file-row-info">
-          <div class="file-row-name">${shortName}</div>
-          <div class="file-row-size">${fmtSize(file.metadata?.size||0)}</div>
-        </div>
-        <a class="dl-circle" href="${publicUrl}" download="${file.name}" target="_blank" aria-label="Download ${file.name}">
-          <i class="ti ti-download"></i>
-        </a>`;
+        <div class="file-row-info"><div class="file-row-name">${shortName}</div><div class="file-row-size">${fmtSize(file.metadata?.size||0)}</div></div>
+        <a class="dl-circle" href="${publicUrl}" download="${file.name}" target="_blank" aria-label="Download ${file.name}"><i class="ti ti-download"></i></a>`;
       grid.appendChild(row);
     });
-
   } catch(err) {
     showStatus('recv','✦ error: '+(err.message||'something went wrong'),'error');
   }
