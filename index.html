@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="filedrop">
+<title>✦ filedrop</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── PASTE YOUR SUPABASE CREDENTIALS BELOW ── */
+  /* Replace the two placeholder values and save the file */
+
+  :root {
+    --supabase-url: 'https://rwenznwnptjyhgjsunqw.supabase.co/rest/v1/';
+    --supabase-key: 'sb_publishable_XQV0RsoI8GEoa2q9jb0vKA_tv-bICqI';
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #faf9fe;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .header { text-align: center; margin-bottom: 2rem; }
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 7vw, 40px);
+    color: #3C3489;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .subtitle { font-size: 13px; color: #7F77DD; margin-top: 4px; letter-spacing: 0.04em; }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  .tab {
+    padding: 9px 24px;
+    border-radius: 999px;
+    border: 1.5px solid #AFA9EC;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #888780;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab.active { background: #EEEDFE; border-color: #7F77DD; color: #3C3489; }
+  .tab i { font-size: 16px; }
+
+  .panel { display: none; width: 100%; max-width: 460px; }
+  .panel.active { display: block; }
+
+  .drop-zone {
+    border: 2px dashed #AFA9EC;
+    border-radius: 20px;
+    background: #EEEDFE;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+  .drop-zone:hover, .drop-zone.over { background: #CECBF6; border-color: #7F77DD; }
+  .drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .drop-icon { font-size: 40px; color: #7F77DD; display: block; margin-bottom: 8px; }
+  .drop-label { font-size: 15px; font-weight: 500; color: #3C3489; display: block; margin-bottom: 4px; }
+  .drop-hint { font-size: 12px; color: #534AB7; }
+
+  .file-preview {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-bottom: 1.25rem;
+    border: 0.5px solid #CECBF6;
+  }
+  .file-preview.show { display: flex; }
+  .file-icon {
+    width: 44px; height: 44px;
+    background: #EEEDFE;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: #534AB7; flex-shrink: 0;
+  }
+  .file-name { font-size: 13px; font-weight: 500; color: #2C2C2A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
+  .file-size { font-size: 11px; color: #888780; }
+  .remove-btn { margin-left: auto; background: none; border: none; color: #888780; cursor: pointer; font-size: 20px; line-height: 1; }
+
+  .label { font-size: 11px; font-weight: 500; color: #888780; letter-spacing: 0.07em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+
+  .code-row { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+  .code-input {
+    flex: 1;
+    border: 1.5px solid #AFA9EC;
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: #3C3489;
+    background: #EEEDFE;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .code-input:focus { border-color: #7F77DD; }
+  .code-input::placeholder { color: #AFA9EC; font-weight: 400; letter-spacing: 0.02em; }
+
+  .btn {
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: #7F77DD;
+    color: white;
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 14px;
+    margin-bottom: 0.5rem;
+  }
+  .btn-primary:hover { background: #534AB7; }
+  .btn-primary:disabled { background: #AFA9EC; cursor: not-allowed; }
+  .btn-sm { background: #EEEDFE; color: #534AB7; border: 1.5px solid #AFA9EC; border-radius: 10px; flex-shrink: 0; }
+  .btn-sm:hover { background: #CECBF6; }
+
+  .progress-bar {
+    height: 4px;
+    background: #EEEDFE;
+    border-radius: 999px;
+    margin: 12px 0;
+    overflow: hidden;
+    display: none;
+  }
+  .progress-bar.show { display: block; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7F77DD, #AFA9EC);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .code-display {
+    display: none;
+    background: #EEEDFE;
+    border: 1.5px solid #AFA9EC;
+    border-radius: 18px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .code-display.show { display: block; }
+  .code-label { font-size: 11px; color: #534AB7; text-transform: uppercase; letter-spacing: 0.08em; }
+  .code-word {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    color: #3C3489;
+    letter-spacing: 0.1em;
+    display: block;
+    margin: 10px 0;
+  }
+  .code-meta { font-size: 12px; color: #7F77DD; }
+  .pulse { display: inline-block; width: 8px; height: 8px; background: #7F77DD; border-radius: 50%; margin-right: 5px; animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.75)} }
+
+  .copy-btn {
+    background: #7F77DD;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background 0.15s;
+  }
+  .copy-btn:hover { background: #534AB7; }
+
+  .status {
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    margin-top: 1rem;
+    display: none;
+    line-height: 1.5;
+  }
+  .status.show { display: block; }
+  .status.success { background: #EAF3DE; color: #27500A; }
+  .status.error { background: #FCEBEB; color: #791F1F; }
+  .status.info { background: #EEEDFE; color: #3C3489; }
+
+  .receive-card {
+    display: none;
+    background: white;
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-top: 1rem;
+    border: 0.5px solid #CECBF6;
+  }
+  .receive-card.show { display: block; }
+  .recv-icon { width: 48px; height: 48px; background: #EEEDFE; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #534AB7; float: left; margin-right: 14px; }
+  .recv-name { font-size: 14px; font-weight: 500; color: #2C2C2A; }
+  .recv-meta { font-size: 12px; color: #888780; margin-bottom: 14px; }
+  .dl-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: #7F77DD; color: white; border: none; border-radius: 10px;
+    padding: 11px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; width: 100%; clear: both; transition: background 0.15s;
+  }
+  .dl-btn:hover { background: #534AB7; }
+
+  .recent { margin-top: 2rem; }
+  .recent-title { font-size: 11px; font-weight: 500; color: #888780; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; }
+  .pins { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pin { background: white; border-radius: 14px; padding: 12px; border: 0.5px solid #CECBF6; }
+  .pin-icon { font-size: 20px; color: #7F77DD; margin-bottom: 4px; }
+  .pin-name { font-size: 12px; font-weight: 500; color: #2C2C2A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pin-code { font-size: 11px; color: #534AB7; letter-spacing: 0.05em; margin-top: 2px; }
+  .pin-expires { font-size: 10px; color: #B4B2A9; margin-top: 2px; }
+
+  .footer { margin-top: 3rem; text-align: center; font-size: 11px; color: #B4B2A9; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1 class="title">✦ filedrop</h1>
+  <p class="subtitle">share files with a secret word · no account needed</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('send')"><i class="ti ti-upload"></i> send</button>
+  <button class="tab" onclick="switchTab('receive')"><i class="ti ti-download"></i> receive</button>
+</div>
+
+<!-- SEND -->
+<div id="panel-send" class="panel active">
+  <div class="drop-zone" id="drop-zone">
+    <input type="file" id="file-input" onchange="onFile(this.files[0])">
+    <i class="ti ti-cloud-upload drop-icon"></i>
+    <span class="drop-label">drop a file here</span>
+    <span class="drop-hint">or tap to browse · up to 50 MB</span>
+  </div>
+
+  <div class="file-preview" id="file-preview">
+    <div class="file-icon"><i class="ti ti-file" id="preview-icon"></i></div>
+    <div style="min-width:0">
+      <div class="file-name" id="preview-name"></div>
+      <div class="file-size" id="preview-size"></div>
+    </div>
+    <button class="remove-btn" onclick="clearFile()"><i class="ti ti-x"></i></button>
+  </div>
+
+  <span class="label">your secret code</span>
+  <div class="code-row">
+    <input type="text" class="code-input" id="send-code" placeholder="e.g. sunflower42" maxlength="20" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9]/g,'');checkBtn()">
+    <button class="btn btn-sm" onclick="randomCode()"><i class="ti ti-wand"></i> random</button>
+  </div>
+
+  <button class="btn btn-primary" id="share-btn" onclick="shareFile()" disabled>
+    <i class="ti ti-sparkles"></i> share file
+  </button>
+
+  <div class="progress-bar" id="upload-progress"><div class="progress-fill" id="progress-fill"></div></div>
+
+  <div class="code-display" id="code-display">
+    <span class="code-label">share this code with your friend</span>
+    <span class="code-word" id="active-code"></span>
+    <span class="code-meta"><span class="pulse"></span>live · expires in 24 hours</span>
+    <br>
+    <button class="copy-btn" onclick="copyCode()"><i class="ti ti-copy"></i> copy code</button>
+  </div>
+
+  <div class="status" id="send-status"></div>
+
+  <div class="recent" id="send-recent" style="display:none">
+    <p class="recent-title">recently shared</p>
+    <div class="pins" id="pins"></div>
+  </div>
+</div>
+
+<!-- RECEIVE -->
+<div id="panel-receive" class="panel">
+  <span class="label">enter the secret code</span>
+  <div class="code-row" style="margin-bottom:1.5rem">
+    <input type="text" class="code-input" id="recv-code" placeholder="type code here…" maxlength="20" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9]/g,'')" onkeydown="if(event.key==='Enter')findFile()">
+    <button class="btn btn-sm" onclick="findFile()"><i class="ti ti-search"></i> find</button>
+  </div>
+
+  <div class="status" id="recv-status"></div>
+  <div class="receive-card" id="receive-card"></div>
+</div>
+
+<p class="footer">✦ filedrop · files auto-delete after 24 hours</p>
+
+<script>
+// ─────────────────────────────────────────────
+// PASTE YOUR CREDENTIALS HERE
+// ─────────────────────────────────────────────
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+// ─────────────────────────────────────────────
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const WORDS = ['blossom','velvet','sunray','pebble','willow','amber','cobalt','prism','mango','coral','daisy','fern','lunar','drift','haven','cedar','tide','glimmer','moss','opal','sparrow','indigo','maple','dew','cove','rose','birch','ember','storm','pearl'];
+
+const FILE_ICONS = {
+  image: 'ti-photo', video: 'ti-video', audio: 'ti-music',
+  pdf: 'ti-file-type-pdf', zip: 'ti-file-zip', text: 'ti-file-text', default: 'ti-file'
+};
+
+let selectedFile = null;
+let recentPins = [];
+
+function getIcon(name) {
+  const ext = (name.split('.').pop() || '').toLowerCase();
+  if (['jpg','jpeg','png','gif','webp','svg','heic'].includes(ext)) return FILE_ICONS.image;
+  if (['mp4','mov','avi','webm','mkv'].includes(ext)) return FILE_ICONS.video;
+  if (['mp3','wav','ogg','flac','m4a'].includes(ext)) return FILE_ICONS.audio;
+  if (ext === 'pdf') return FILE_ICONS.pdf;
+  if (['zip','rar','7z','tar','gz'].includes(ext)) return FILE_ICONS.zip;
+  if (['txt','md','csv','json','xml','doc','docx'].includes(ext)) return FILE_ICONS.text;
+  return FILE_ICONS.default;
+}
+
+function fmtSize(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+  return (b / 1048576).toFixed(1) + ' MB';
+}
+
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((el, i) => el.classList.toggle('active', ['send','receive'][i] === t));
+  document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
+  document.getElementById('panel-' + t).classList.add('active');
+}
+
+function randomCode() {
+  const w = WORDS[Math.floor(Math.random() * WORDS.length)];
+  const n = Math.floor(Math.random() * 90) + 10;
+  document.getElementById('send-code').value = w + n;
+  checkBtn();
+}
+
+function onFile(f) {
+  if (!f) return;
+  if (f.size > 50 * 1024 * 1024) {
+    showStatus('send', '✦ file too large — max 50 MB', 'error');
+    return;
+  }
+  selectedFile = f;
+  const icon = getIcon(f.name);
+  document.getElementById('preview-icon').className = 'ti ' + icon;
+  document.getElementById('preview-name').textContent = f.name;
+  document.getElementById('preview-size').textContent = fmtSize(f.size);
+  document.getElementById('file-preview').classList.add('show');
+  document.getElementById('drop-zone').style.display = 'none';
+  checkBtn();
+}
+
+function clearFile() {
+  selectedFile = null;
+  document.getElementById('file-preview').classList.remove('show');
+  document.getElementById('drop-zone').style.display = '';
+  document.getElementById('file-input').value = '';
+  checkBtn();
+}
+
+function checkBtn() {
+  const code = document.getElementById('send-code').value.trim();
+  document.getElementById('share-btn').disabled = !selectedFile || !code;
+}
+
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); if (e.dataTransfer.files[0]) onFile(e.dataTransfer.files[0]); });
+
+async function shareFile() {
+  const code = document.getElementById('send-code').value.trim();
+  if (!code || !selectedFile) return;
+
+  const btn = document.getElementById('share-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader"></i> uploading…';
+  showStatus('send', '✦ uploading your file…', 'info');
+
+  const progress = document.getElementById('upload-progress');
+  const fill = document.getElementById('progress-fill');
+  progress.classList.add('show');
+
+  // Animate progress bar
+  let pct = 0;
+  const ticker = setInterval(() => { pct = Math.min(pct + Math.random() * 15, 85); fill.style.width = pct + '%'; }, 200);
+
+  try {
+    const path = `${code}/${selectedFile.name}`;
+
+    // Remove old file with same code if exists
+    await sb.storage.from('files').remove([path]);
+
+    const { error } = await sb.storage.from('files').upload(path, selectedFile, {
+      cacheControl: '86400',
+      upsert: true
+    });
+
+    clearInterval(ticker);
+
+    if (error) throw error;
+
+    fill.style.width = '100%';
+
+    // Save metadata
+    await sb.from('file_metadata').upsert({
+      code,
+      filename: selectedFile.name,
+      size: selectedFile.size,
+      path,
+      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+    });
+
+    document.getElementById('active-code').textContent = code;
+    document.getElementById('code-display').classList.add('show');
+    btn.innerHTML = '<i class="ti ti-check"></i> shared! ✦';
+    showStatus('send', '✦ file uploaded! share the code with your friend.', 'success');
+
+    addPin(code, selectedFile.name);
+
+    setTimeout(() => { progress.classList.remove('show'); fill.style.width = '0%'; }, 1000);
+
+  } catch (err) {
+    clearInterval(ticker);
+    progress.classList.remove('show');
+    fill.style.width = '0%';
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ti ti-sparkles"></i> share file';
+    showStatus('send', '✦ upload failed: ' + (err.message || 'check your Supabase credentials'), 'error');
+  }
+}
+
+function addPin(code, name) {
+  recentPins.unshift({ code, name });
+  if (recentPins.length > 4) recentPins.pop();
+  renderPins();
+}
+
+function renderPins() {
+  if (!recentPins.length) return;
+  document.getElementById('send-recent').style.display = 'block';
+  const container = document.getElementById('pins');
+  container.innerHTML = recentPins.map(p => `
+    <div class="pin">
+      <div class="pin-icon"><i class="ti ${getIcon(p.name)}"></i></div>
+      <div class="pin-name">${p.name}</div>
+      <div class="pin-code">${p.code}</div>
+      <div class="pin-expires">expires in 24h</div>
+    </div>
+  `).join('');
+}
+
+function copyCode() {
+  const code = document.getElementById('active-code').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.innerHTML = '<i class="ti ti-check"></i> copied!';
+    setTimeout(() => { btn.innerHTML = '<i class="ti ti-copy"></i> copy code'; }, 2000);
+  });
+}
+
+async function findFile() {
+  const code = document.getElementById('recv-code').value.trim();
+  if (!code) return;
+
+  const statusEl = document.getElementById('recv-status');
+  const card = document.getElementById('receive-card');
+  card.classList.remove('show');
+  card.innerHTML = '';
+  showStatus('recv', '✦ searching…', 'info');
+
+  try {
+    // List files in the code folder
+    const { data: files, error } = await sb.storage.from('files').list(code);
+
+    if (error || !files || files.length === 0) {
+      showStatus('recv', '✦ no file found for that code. double-check the spelling!', 'error');
+      return;
+    }
+
+    const file = files[0];
+    const path = `${code}/${file.name}`;
+    const { data: { publicUrl } } = sb.storage.from('files').getPublicUrl(path);
+
+    statusEl.style.display = 'none';
+
+    card.classList.add('show');
+    card.innerHTML = `
+      <div class="recv-icon"><i class="ti ${getIcon(file.name)}"></i></div>
+      <div class="recv-name">${file.name}</div>
+      <div class="recv-meta">${fmtSize(file.metadata?.size || 0)} · tap to download</div>
+      <button class="dl-btn" onclick="window.open('${publicUrl}', '_blank')">
+        <i class="ti ti-download"></i> download ${file.name.length > 30 ? file.name.slice(0, 28) + '…' : file.name}
+      </button>
+    `;
+
+  } catch (err) {
+    showStatus('recv', '✦ error: ' + (err.message || 'something went wrong'), 'error');
+  }
+}
+
+function showStatus(panel, msg, type) {
+  const el = document.getElementById(panel + '-status');
+  if (!el) return;
+  el.className = 'status show ' + type;
+  el.textContent = msg;
+}
+</script>
+</body>
+</html>
