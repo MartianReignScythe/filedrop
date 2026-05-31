@@ -350,16 +350,17 @@ async function findFiles() {
       grid.appendChild(card);
     });
     others.forEach(file => {
-      const { data: { publicUrl } } = sb.storage.from('files').getPublicUrl(code+'/'+file.name);
-      const shortName = file.name.length>28?file.name.slice(0,26)+'…':file.name;
-      const row = document.createElement('div');
-      row.className='file-row';
-      row.style.columnSpan='all';
-      row.innerHTML=`
-        <div class="file-row-icon"><i class="ti ${getIcon(file.name)}"></i></div>
-        <div class="file-row-info"><div class="file-row-name">${shortName}</div><div class="file-row-size">${fmtSize(file.metadata?.size||0)}</div></div>
-        <a class="dl-circle" href="${publicUrl}" download="${file.name}" target="_blank" aria-label="Download ${file.name}"><i class="ti ti-download"></i></a>`;
-      grid.appendChild(row);
+      const { data: { publicUrl } } = sb.storage.from("files").getPublicUrl(code+"/"+file.name);
+      const shortName = file.name.length>18?file.name.slice(0,16)+"…":file.name;
+      const card = document.createElement("div");
+      card.className="pin-card";
+      card.innerHTML=`
+        <div class="pin-thumb-placeholder"><i class="ti ${getIcon(file.name)}"></i></div>
+        <div class="pin-footer">
+          <div style="min-width:0;flex:1"><div class="pin-fname">${shortName}</div><div class="pin-fsize">${fmtSize(file.metadata?.size||0)}</div></div>
+          <a class="dl-circle" href="${publicUrl}" download="${file.name}" target="_blank" aria-label="Download ${file.name}"><i class="ti ti-download"></i></a>
+        </div>`;
+      grid.appendChild(card);
     });
   } catch(err) {
     showStatus('recv','✦ error: '+(err.message||'something went wrong'),'error');
